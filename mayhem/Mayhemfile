@@ -1,0 +1,5 @@
+project: pforth
+target: pforth
+
+cmds:
+  - cmd: /pforth @@
