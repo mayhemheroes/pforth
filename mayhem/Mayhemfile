@@ -2,4 +2,4 @@ project: pforth
 target: pforth
 
 cmds:
-  - cmd: /pforth @@
+  - cmd: /platforms/unix/pforth @@
