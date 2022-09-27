@@ -2,4 +2,4 @@ project: pforth
 target: pforth
 
 cmds:
-  - cmd: /platforms/unix/pforth_standalone
+  - cmd: /platforms/unix/pforth_standalone @@
