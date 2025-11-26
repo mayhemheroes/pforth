@@ -1,0 +1,97 @@
+# ============================================================================
+# RLENV Patch Playground - pForth
+# Single-stage build with embedded test data
+# ============================================================================
+
+# ============================================================================
+# 1. Base Image Selection
+# ============================================================================
+FROM --platform=linux/amd64 ubuntu:20.04
+
+# ============================================================================
+# 2. System Dependencies (merge ALL stages from original Dockerfile)
+# ============================================================================
+RUN apt-get update && apt-get install -y \
+    cmake \
+    clang \
+    make \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================================================
+# 3. Copy MTV Binary (REQUIRED - used by validate.sh)
+# ============================================================================
+COPY --from="us-east4-docker.pkg.dev/forallsecure-1/rlenv-staging/rlenv-mcp-static:latest" \
+     /rlenv/bin/mtv /rlenv/bin/mtv
+
+# ============================================================================
+# 4. Language-Specific Setup
+# ============================================================================
+# C project with standard Make build - no special environment needed
+
+# ============================================================================
+# 5. Copy Source Code (EARLY - source exists now)
+# ============================================================================
+COPY . /rlenv/source/pforth/
+
+# ============================================================================
+# 6. Make Source World-Writable (REQUIRED for non-root rebuilds)
+# ============================================================================
+RUN chmod -R 777 /rlenv/source
+
+# ============================================================================
+# 7. Set Working Directory
+# ============================================================================
+WORKDIR /rlenv/source/pforth/platforms/unix
+
+# ============================================================================
+# 8. Install Language Dependencies (if any)
+# ============================================================================
+# No additional language dependencies needed - standard C build
+
+# ============================================================================
+# 9. Build Application (extract from original Dockerfile)
+# ============================================================================
+RUN make all
+
+# ============================================================================
+# 10. Copy Artifacts to Expected Locations (if needed)
+# ============================================================================
+# Build produces pforth_standalone in platforms/unix/ which is already at
+# the expected path /rlenv/source/pforth/platforms/unix/pforth_standalone
+# This matches the absolute path /platforms/unix/pforth_standalone
+# when WORKDIR is set to /
+
+# ============================================================================
+# 11. Permission Management (REQUIRED)
+# ============================================================================
+# Target executable (rwxrw-rw-)
+RUN chmod 766 /rlenv/source/pforth/platforms/unix/pforth_standalone
+
+# Build output directory
+RUN chmod -R 777 /rlenv/source/pforth/platforms/unix 2>/dev/null || true
+
+# ============================================================================
+# 12. Copy rlenv Directory (MUST BE NEAR END - doesn't exist yet!)
+# ============================================================================
+COPY rlenv /rlenv
+
+# ============================================================================
+# 13. Final Permission Fix (REQUIRED)
+# ============================================================================
+RUN chmod -R 777 /rlenv/source
+
+# ============================================================================
+# 14. Set Entry Point
+# ============================================================================
+# Note: The target expects /platforms/unix/pforth_standalone (absolute path)
+# We need to create a symlink to match this path structure
+RUN mkdir -p /platforms/unix && \
+    ln -sf /rlenv/source/pforth/platforms/unix/pforth_standalone /platforms/unix/pforth_standalone
+
+CMD ["/platforms/unix/pforth_standalone"]
+
+# ============================================================================
+# 15. Reset Working Directory
+# ============================================================================
+WORKDIR /

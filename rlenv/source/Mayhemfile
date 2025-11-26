@@ -1,0 +1,10 @@
+project: mayhemheroes/pforth
+target: pforth
+
+cmds:
+  - cmd: /platforms/unix/pforth_standalone @@
+    env: {}
+image: ghcr.io/mayhemheroes/pforth@sha256:4c231d40707e4732625625fb9092b7365ab23f9a85623d0f962eae9bc67e8bff
+duration: 300
+testsuite:
+  - https://app.mayhem.security/mayhemheroes/pforth/pforth/testsuite.tar

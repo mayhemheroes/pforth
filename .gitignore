@@ -25,3 +25,4 @@ csrc/libPforth_lib.a
 csrc/libPforth_lib_sd.a
 csrc/pfdicdat.h
 
+rlenv/mayhem/data/testsuite

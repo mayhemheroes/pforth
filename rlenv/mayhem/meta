@@ -1,0 +1,12 @@
+{
+  "workspace": "mayhemheroes",
+  "project": "pforth",
+  "target": "pforth",
+  "run_id": "1",
+  "ci_url": "https://github.com:443/mayhemheroes/pforth//actions/runs/3753991891",
+  "run_image_name": "ghcr.io/mayhemheroes/pforth:master",
+  "run_image_with_digest": "ghcr.io/mayhemheroes/pforth@sha256:4c231d40707e4732625625fb9092b7365ab23f9a85623d0f962eae9bc67e8bff",
+  "git_repo_url": "git@github.com:mayhemheroes/pforth.git",
+  "git_revision": "04304f4bcde865e10a121dffd3de51c70bf7b097",
+  "target_executable": "/platforms/unix/pforth_standalone"
+}
